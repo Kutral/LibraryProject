@@ -1,0 +1,133 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.container {
+    text-align: center;
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+p {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    margin: 10px;
+    text-decoration: none;
+    color: white;
+    background-color: #3498db;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+.btn:hover {
+    background-color: #2980b9;
+}
+.btn-secondary {
+    background-color: #2ecc71;
+}
+.btn-secondary:hover {
+    background-color: #27ae60;
+}
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #34495e;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+.error-message {
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+th {
+    background-color: #3498db;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Container Variations */
+.container-md {
+    max-width: 800px;
+}
+.container-lg {
+    max-width: 900px;
+}
+
+/* Margins */
+.mt-20 {
+    margin-top: 20px;
+}
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: white;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+.btn-edit {
+    background-color: #f39c12;
+}
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+/* Messages and Text */
+.success-message {
+    color: #27ae60;
+    margin-bottom: 15px;
+}
+.footer-text {
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+.link-highlight {
+    color: #3498db;
+}
