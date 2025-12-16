@@ -12,12 +12,15 @@ public class DBConnection {
     private static final Properties properties = new Properties();
 
     static {
+        System.out.println("DBConnection: Loading db.properties...");
         try (InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
             if (input == null) {
-                System.out.println("Sorry, unable to find db.properties");
+                System.err.println("Sorry, unable to find db.properties");
+            } else {
+                properties.load(input);
+                Class.forName(properties.getProperty("db.driver"));
+                System.out.println("DBConnection: Driver loaded.");
             }
-            properties.load(input);
-            Class.forName(properties.getProperty("db.driver"));
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
