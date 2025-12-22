@@ -24,9 +24,9 @@ public class BorrowDAOImpl implements BorrowDAO {
 
         try {
             conn = DBConnection.getConnection();
-            conn.setAutoCommit(false); // Start transaction
+            conn.setAutoCommit(false);
 
-            // 0. Check if user already has this book borrowed (active, return_date is NULL)
+            // 0. Check if user already
             String checkActiveSql = "SELECT count(*) FROM borrowing_history WHERE user_id = ? AND book_id = ? AND return_date IS NULL";
             checkActiveStmt = conn.prepareStatement(checkActiveSql);
             checkActiveStmt.setInt(1, userId);

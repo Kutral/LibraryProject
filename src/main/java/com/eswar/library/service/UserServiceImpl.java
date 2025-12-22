@@ -3,6 +3,7 @@ package com.eswar.library.service;
 import com.eswar.library.dao.UserDAO;
 import com.eswar.library.dao.UserDAOImpl;
 import com.eswar.library.model.User;
+import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
@@ -16,9 +17,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String username, String password) {
-        return userDAO.findByUsername(username)
-                .filter(u -> u.getPassword().equals(password))
-                .orElse(null);
+        Optional<User> userOpt = userDAO.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     @Override

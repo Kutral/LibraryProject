@@ -26,7 +26,6 @@ public class UserListRestServlet extends HttpServlet {
 
         try {
             List<User> users = userDAO.findAll();
-            // Security: Don't send passwords to frontend
             for (User u : users) {
                 u.setPassword(null);
             }
