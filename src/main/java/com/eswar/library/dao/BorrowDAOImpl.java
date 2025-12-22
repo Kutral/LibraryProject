@@ -123,7 +123,7 @@ public class BorrowDAOImpl implements BorrowDAO {
 
             if (rs.next()) {
                 if (rs.getTimestamp("return_date") != null) {
-                    // Already returned
+
                     conn.rollback();
                     return false;
                 }
@@ -191,7 +191,7 @@ public class BorrowDAOImpl implements BorrowDAO {
                     b.setBookId(rs.getInt("book_id"));
                     b.setBorrowDate(rs.getTimestamp("borrow_date"));
                     b.setReturnDate(rs.getTimestamp("return_date"));
-                    // Populate transient fields
+
                     b.setBookTitle(rs.getString("title"));
                     b.setBookAuthor(rs.getString("author"));
                     list.add(b);
