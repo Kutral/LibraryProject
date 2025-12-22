@@ -1,1 +1,0 @@
-<html><body><h1>Backend is Alive!</h1></body></html>
