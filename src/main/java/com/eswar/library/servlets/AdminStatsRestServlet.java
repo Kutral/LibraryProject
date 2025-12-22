@@ -1,4 +1,4 @@
-package com.eswar.library.rest;
+package com.eswar.library.servlets;
 
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -27,17 +27,5 @@ public class AdminStatsRestServlet extends HttpServlet {
         stats.put("booksBorrowed", 12);
 
         resp.getWriter().write(gson.toJson(new ApiResponse(true, "Stats fetched", stats)));
-    }
-
-    private static class ApiResponse {
-        boolean success;
-        String message;
-        Object data;
-
-        ApiResponse(boolean success, String message, Object data) {
-            this.success = success;
-            this.message = message;
-            this.data = data;
-        }
     }
 }

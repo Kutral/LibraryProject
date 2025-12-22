@@ -5,6 +5,8 @@ import java.util.Optional;
 
 public interface UserDAO {
     boolean createUser(User user);
+    boolean updateUser(User user);
+    boolean deleteUser(int id);
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
     java.util.List<User> findAll();

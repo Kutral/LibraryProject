@@ -1,0 +1,75 @@
+package com.eswar.library.listener;
+
+import com.eswar.library.util.DBConnection;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+import java.sql.Connection;
+import java.sql.Statement;
+
+@WebListener
+public class DatabaseInitializer implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        System.out.println("DatabaseInitializer: Starting database schema initialization...");
+
+        String[] sqlStatements = {
+            "CREATE TABLE IF NOT EXISTS users (" +
+            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+            "    username VARCHAR(50) NOT NULL UNIQUE," +
+            "    password VARCHAR(255) NOT NULL," +
+            "    email VARCHAR(100) NOT NULL UNIQUE," +
+            "    role VARCHAR(20) DEFAULT 'USER'," +
+            "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+            ")",
+            
+            "CREATE TABLE IF NOT EXISTS books (" +
+            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+            "    title VARCHAR(255) NOT NULL," +
+            "    author VARCHAR(255) NOT NULL," +
+            "    isbn VARCHAR(20) UNIQUE," +
+            "    available_copies INT DEFAULT 1" +
+            ")",
+            
+            "CREATE TABLE IF NOT EXISTS borrowing_history (" +
+            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+            "    user_id INT NOT NULL," +
+            "    book_id INT NOT NULL," +
+            "    borrow_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+            "    return_date TIMESTAMP NULL," +
+            "    FOREIGN KEY (user_id) REFERENCES users(id)," +
+            "    FOREIGN KEY (book_id) REFERENCES books(id)" +
+            ")",
+
+            // Seed initial data
+            "INSERT IGNORE INTO books (id, title, author, isbn, available_copies) VALUES " +
+            "(1, 'The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 5)," +
+            "(2, 'To Kill a Mockingbird', 'Harper Lee', '9780061120084', 3)," +
+            "(3, '1984', 'George Orwell', '9780451524935', 4)," +
+            "(4, 'Pride and Prejudice', 'Jane Austen', '9780141439518', 2)," +
+            "(5, 'The Catcher in the Rye', 'J.D. Salinger', '9780316769480', 3)",
+
+            "INSERT IGNORE INTO users (id, username, password, email, role) VALUES " +
+            "(1, 'admin', 'admin', 'admin@library.com', 'ADMIN')"
+        };
+
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement()) {
+            
+            for (String sql : sqlStatements) {
+                stmt.execute(sql);
+            }
+            System.out.println("DatabaseInitializer: Schema initialized successfully.");
+            
+        } catch (Exception e) {
+            System.err.println("DatabaseInitializer Error: Failed to initialize database.");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // Cleanup code if needed
+    }
+}

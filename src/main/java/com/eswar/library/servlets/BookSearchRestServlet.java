@@ -1,4 +1,4 @@
-package com.eswar.library.rest;
+package com.eswar.library.servlets;
 
 import com.eswar.library.dao.BookDAO;
 import com.eswar.library.dao.BookDAOImpl;
@@ -24,30 +24,20 @@ public class BookSearchRestServlet extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
+        String query = req.getParameter("query");
+
         try {
-            List<Book> books = bookDAO.findAll();
+            List<Book> books;
+            if (query != null && !query.trim().isEmpty()) {
+                books = bookDAO.searchBooks(query.trim());
+            } else {
+                books = bookDAO.findAll();
+            }
             resp.getWriter().write(gson.toJson(new ApiResponse(true, "Books fetched successfully", books)));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new ApiResponse(false, "Error fetching books")));
             e.printStackTrace();
-        }
-    }
-
-    private static class ApiResponse {
-        boolean success;
-        String message;
-        Object data;
-
-        ApiResponse(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-
-        ApiResponse(boolean success, String message, Object data) {
-            this.success = success;
-            this.message = message;
-            this.data = data;
         }
     }
 }

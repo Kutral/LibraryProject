@@ -1,4 +1,4 @@
-package com.eswar.library.rest;
+package com.eswar.library.servlets;
 
 import com.google.gson.Gson;
 import com.eswar.library.dao.UserDAO;
@@ -26,11 +26,14 @@ public class UserListRestServlet extends HttpServlet {
 
         try {
             List<User> users = userDAO.findAll();
-            String json = gson.toJson(users);
-            resp.getWriter().write(json);
+            // Security: Don't send passwords to frontend
+            for (User u : users) {
+                u.setPassword(null);
+            }
+            resp.getWriter().write(gson.toJson(new ApiResponse(true, "Users fetched successfully", users)));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\": \"Unable to fetch users\"}");
+            resp.getWriter().write(gson.toJson(new ApiResponse(false, "Error fetching users: " + e.getMessage())));
             e.printStackTrace();
         }
     }
