@@ -27,10 +27,15 @@ public class DBConnection {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                properties.getProperty("db.url"),
-                properties.getProperty("db.username"),
-                properties.getProperty("db.password")
-        );
+        String url = System.getenv("DB_URL");
+        String user = System.getenv("DB_USERNAME");
+        String password = System.getenv("DB_PASSWORD");
+
+        // Fallback to properties if Env Vars are missing (for local dev)
+        if (url == null) url = properties.getProperty("db.url");
+        if (user == null) user = properties.getProperty("db.username");
+        if (password == null) password = properties.getProperty("db.password");
+
+        return DriverManager.getConnection(url, user, password);
     }
 }
