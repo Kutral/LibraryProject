@@ -110,16 +110,71 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public boolean deleteBook(int id) {
-        String sql = "DELETE FROM books WHERE id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
+        String deleteHistorySql = "DELETE FROM borrowing_history WHERE book_id = ?";
+        String deleteBookSql = "DELETE FROM books WHERE id = ?";
+        
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Start Transaction
+
+            // 1. Delete associated borrowing history
+            try (PreparedStatement stmtHistory = conn.prepareStatement(deleteHistorySql)) {
+                stmtHistory.setInt(1, id);
+                stmtHistory.executeUpdate();
+            }
+
+            // 2. Delete the book
+            boolean success;
+            try (PreparedStatement stmtBook = conn.prepareStatement(deleteBookSql)) {
+                stmtBook.setInt(1, id);
+                int rows = stmtBook.executeUpdate();
+                success = rows > 0;
+            }
+
+            if (success) {
+                conn.commit();
+                return true;
+            } else {
+                conn.rollback();
+                return false;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    }
+
+    @Override
+    public int countBooks() {
+        String sql = "SELECT COUNT(*) FROM books";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private Book mapResultSetToBook(ResultSet rs) throws SQLException {

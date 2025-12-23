@@ -162,6 +162,14 @@ public class TestDashboardServlet extends HttpServlet {
         out.println("<pre id='adminUserResult'>Admin User Results...</pre>");
         out.println("</div>");
 
+        // 8. Admin: Stats
+        out.println("<div class='section' style='border-left: 5px solid #17a2b8;'>");
+        out.println("<h2>8. Admin: Dashboard Stats</h2>");
+        out.println("<p>API: <span class='url-display' id='url-admin-stats'>/api/admin/stats</span></p>");
+        out.println("<button onclick='fetchStats()' style='background-color: #17a2b8;'>Fetch Stats</button>");
+        out.println("<pre id='statsResult'>Stats will appear here...</pre>");
+        out.println("</div>");
+
         // Scripts
         out.println("<script>");
         out.println("const baseUrl = window.location.origin;");
@@ -305,6 +313,10 @@ public class TestDashboardServlet extends HttpServlet {
         out.println("function deleteUser() {");
         out.println("  const id = document.getElementById('deleteUserId').value;");
         out.println("  apiCall('/api/admin/users?id=' + id, { method: 'DELETE' }, 'adminUserResult');");
+        out.println("}");
+
+        out.println("function fetchStats() {");
+        out.println("  apiCall('/api/admin/stats', { method: 'GET' }, 'statsResult');");
         out.println("}");
         out.println("</script>");
 

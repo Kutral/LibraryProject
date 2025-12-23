@@ -18,6 +18,8 @@ A robust, Java-based backend for a Library Management System built with **Servle
 ### 🛡️ Admin Features
 - **Book Management:** Create, Update, and Delete books.
 - **User Management:** Update user roles (Promote to Admin) and delete users.
+- **Book Requests:** Approve or reject user requests for new books.
+- **Dashboard Stats:** View key metrics (total users, books, active borrows).
 - **Database Control:** Automated schema initialization on server startup.
 
 ---
@@ -30,20 +32,6 @@ A robust, Java-based backend for a Library Management System built with **Servle
 - **Connectivity:** JDBC (Java Database Connectivity)
 - **JSON Handling:** Google Gson
 - **Build Tool:** Maven
-
----
-
-## 📂 Project Structure
-
-```text
-src/main/java/com/eswar/library/
-├── dao/        # Data Access Objects (SQL queries & DB logic)
-├── listener/   # App lifecycle listeners (DB Auto-Initialization)
-├── model/      # Plain Java Objects (User, Book, Borrow)
-├── service/    # Business logic layer
-├── servlets/   # REST API Controllers (Handles JSON requests)
-└── util/       # Database connection utilities
-```
 
 ---
 
@@ -72,25 +60,51 @@ The system is equipped with a `DatabaseInitializer` listener.
 
 ## 📡 API Endpoints
 
-### Public / User APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Login user |
-| `POST` | `/api/auth/signup` | Register new user |
-| `GET` | `/api/books` | Search & List all books |
-| `GET` | `/api/borrow` | View user borrow history |
-| `POST` | `/api/borrow` | Borrow a book |
-| `PUT` | `/api/borrow` | Return a book |
+### 🔐 Authentication
+| Method | Endpoint | Description | Request Body |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Login user | `{ "username": "...", "password": "..." }` |
+| `POST` | `/api/auth/signup` | Register new user | `{ "username": "...", "password": "...", "email": "..." }` |
 
-### Admin APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/users` | List all registered users |
-| `POST` | `/api/admin/books` | Add a new book |
-| `PUT` | `/api/admin/books` | Update book details |
-| `DELETE` | `/api/admin/books` | Delete a book |
-| `PUT` | `/api/admin/users` | Update user details/roles |
-| `DELETE` | `/api/admin/users` | Delete a user |
+### 📚 Books (Public)
+| Method | Endpoint | Description | Parameters |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/books` | List all books | None |
+| `GET` | `/api/books?query=...` | Search books | `query` (title/author/isbn) |
+
+### 📖 Borrowing (User)
+| Method | Endpoint | Description | Request Body / Params |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/borrow?userId=...` | View borrow history | `userId` (Param) |
+| `POST` | `/api/borrow` | Borrow a book | `{ "userId": 1, "bookId": 5 }` |
+| `PUT` | `/api/borrow` | Return a book | `{ "borrowId": 10 }` |
+
+### 🙋 Book Requests (User)
+| Method | Endpoint | Description | Request Body / Params |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/requests` | Request a new book | `{ "userId": 1, "title": "..." }` |
+| `GET` | `/api/requests?userId=...` | View my requests | `userId` (Param) |
+
+### 🛡️ Admin: Books
+| Method | Endpoint | Description | Request Body / Params |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/admin/books` | Add a new book | `{ "title": "...", "author": "...", "isbn": "...", "availableCopies": 5 }` |
+| `PUT` | `/api/admin/books` | Update book details | `{ "id": 1, "title": "...", ... }` |
+| `DELETE` | `/api/admin/books?id=...` | Delete a book | `id` (Param) |
+
+### 🛡️ Admin: Users
+| Method | Endpoint | Description | Request Body / Params |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/users` | List all users | None |
+| `PUT` | `/api/admin/users` | Update user | `{ "id": 2, "role": "ADMIN", ... }` |
+| `DELETE` | `/api/admin/users?id=...` | Delete a user | `id` (Param) |
+
+### 🛡️ Admin: Requests & Stats
+| Method | Endpoint | Description | Headers / Body |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/admin/requests` | List all requests | **Header:** `X-User-ID: {admin_id}` |
+| `PUT` | `/api/admin/requests/{id}` | Approve/Reject | **Header:** `X-User-ID` <br> Body: `{ "status": "APPROVED" }` |
+| `GET` | `/api/admin/stats` | Dashboard Stats | None |
 
 ---
 
@@ -106,6 +120,7 @@ We have included a **Test Dashboard** to help you interact with the APIs immedia
 - **SQL Injection Prevention:** Uses `PreparedStatement` for all queries.
 - **Data Integrity:** Employs MySQL Transactions with Row-Level Locking (`FOR UPDATE`) for book borrowing.
 - **Sensitive Data:** Passwords are cleared from User objects before sending JSON responses.
+- **Admin Security:** Protected endpoints require `X-User-ID` header validation.
 
 ---
 

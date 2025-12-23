@@ -50,16 +50,81 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean deleteUser(int id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+        String deleteHistorySql = "DELETE FROM borrowing_history WHERE user_id = ?";
+        String deleteRequestsSql = "DELETE FROM book_requests WHERE user_id = ?";
+        String deleteUserSql = "DELETE FROM users WHERE id = ?";
+        
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Start Transaction
+
+            // 1. Delete associated borrowing history
+            try (PreparedStatement stmtHistory = conn.prepareStatement(deleteHistorySql)) {
+                stmtHistory.setInt(1, id);
+                stmtHistory.executeUpdate();
+            }
+
+            // 2. Delete associated book requests
+            try (PreparedStatement stmtRequests = conn.prepareStatement(deleteRequestsSql)) {
+                stmtRequests.setInt(1, id);
+                stmtRequests.executeUpdate();
+            }
+
+            // 3. Delete the user
+            boolean success;
+            try (PreparedStatement stmtUser = conn.prepareStatement(deleteUserSql)) {
+                stmtUser.setInt(1, id);
+                int rows = stmtUser.executeUpdate();
+                success = rows > 0;
+            }
+
+            if (success) {
+                conn.commit();
+                return true;
+            } else {
+                conn.rollback();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToUser(rs));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return Optional.empty();
     }
 
     @Override
@@ -113,6 +178,21 @@ public class UserDAOImpl implements UserDAO {
             e.printStackTrace();
         }
         return users;
+    }
+
+    @Override
+    public int countUsers() {
+        String sql = "SELECT COUNT(*) FROM users";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private User mapResultSetToUser(ResultSet rs) throws SQLException {

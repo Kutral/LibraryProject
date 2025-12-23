@@ -9,5 +9,7 @@ public interface UserDAO {
     boolean deleteUser(int id);
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
+    Optional<User> findById(int id);
     java.util.List<User> findAll();
+    int countUsers();
 }

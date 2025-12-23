@@ -42,6 +42,17 @@ public class DatabaseInitializer implements ServletContextListener {
             "    FOREIGN KEY (book_id) REFERENCES books(id)" +
             ")",
 
+            "CREATE TABLE IF NOT EXISTS book_requests (" +
+            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+            "    user_id INT NOT NULL," +
+            "    title VARCHAR(255) NOT NULL," +
+            "    author VARCHAR(255)," +
+            "    isbn VARCHAR(50)," +
+            "    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING'," +
+            "    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+            "    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+            ")",
+
             // Seed initial data
             "INSERT IGNORE INTO books (id, title, author, isbn, available_copies) VALUES " +
             "(1, 'The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 5)," +
