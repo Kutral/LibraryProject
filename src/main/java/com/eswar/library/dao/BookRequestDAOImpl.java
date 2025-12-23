@@ -20,7 +20,7 @@ public class BookRequestDAOImpl implements BookRequestDAO {
             stmt.setString(2, request.getTitle());
             stmt.setString(3, request.getAuthor());
             stmt.setString(4, request.getIsbn());
-            stmt.setString(5, request.getStatus()); // Should be 'PENDING' usually
+            stmt.setString(5, request.getStatus());
             stmt.setTimestamp(6, request.getRequestDate());
 
             int rows = stmt.executeUpdate();
