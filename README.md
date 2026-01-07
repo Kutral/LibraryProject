@@ -17,6 +17,13 @@ Designed for scalability, security, and ease of integration.
 
 ---
 
+## 🚀 Live Demo & Links
+- **🌐 Frontend App:** [https://libraryfrontend-1ter.onrender.com](https://libraryfrontend-1ter.onrender.com)
+- **⚙️ Backend API:** [https://librarybackend-1dvi.onrender.com](https://librarybackend-1dvi.onrender.com)
+- **🧪 Test Dashboard:** [https://librarybackend-1dvi.onrender.com/test-dashboard](https://librarybackend-1dvi.onrender.com/test-dashboard)
+
+---
+
 ## 📖 Overview
 
 This project serves as the backbone for a modern library application. It provides a comprehensive **REST API** to manage books, users, borrowing transactions, and administrative tasks. Built with a layered architecture, it ensures separation of concerns and maintainability.
