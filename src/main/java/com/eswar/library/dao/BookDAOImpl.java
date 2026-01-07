@@ -118,13 +118,13 @@ public class BookDAOImpl implements BookDAO {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false); // Start Transaction
 
-            // 1. Delete associated borrowing history
+            //  Delete borrowing history
             try (PreparedStatement stmtHistory = conn.prepareStatement(deleteHistorySql)) {
                 stmtHistory.setInt(1, id);
                 stmtHistory.executeUpdate();
             }
 
-            // 2. Delete the book
+            //  Delete the book
             boolean success;
             try (PreparedStatement stmtBook = conn.prepareStatement(deleteBookSql)) {
                 stmtBook.setInt(1, id);
