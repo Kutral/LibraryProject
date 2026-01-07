@@ -156,4 +156,7 @@ Navigate to `/test-dashboard` on your deployment to:
 
 [![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github)](https://github.com/kutraleeswaran)
 
+
+*"Knowledge is the only infinite resource."*
+
 </div>
